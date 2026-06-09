@@ -93,19 +93,9 @@ Buka `http://localhost:3000`.
 
 ## Troubleshooting
 
-### Port 5002 already in use
+### Port 5002 sudah terpakai otomatis dibersihkan
 
-Jika muncul `Address already in use` / `Port 5002 is in use`, ada proses server sebelumnya yang masih jalan. Kill dengan:
-
-```bash
-fuser -k 5002/tcp
-```
-
-Atau:
-
-```bash
-kill -9 $(lsof -ti :5002)
-```
+Tidak perlu khawatir — setiap `npm run dev` dijalankan, port 5002 akan dibersihkan otomatis sebelum server Python menyala.
 
 ### Pakai script start
 
