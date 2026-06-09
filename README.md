@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# pantau-gestur
-Deteksi gestur tangan via webcam, sinkronisasi ke Firebase Realtime Database, pantau langsun dari dashboard React.
-=======
 # PantauGestur
 
 Aplikasi deteksi gestur tangan real-time menggunakan kamera webcam. Hasil deteksi dikirim ke Firebase Realtime Database dan ditampilkan di dashboard web yang bisa dipantau langsung secara live.
@@ -95,6 +91,22 @@ npm run web
 
 Buka `http://localhost:3000`.
 
+## Troubleshooting
+
+### Port 5002 already in use
+
+Jika muncul `Address already in use` / `Port 5002 is in use`, ada proses server sebelumnya yang masih jalan. Kill dengan:
+
+```bash
+fuser -k 5002/tcp
+```
+
+Atau:
+
+```bash
+kill -9 $(lsof -ti :5002)
+```
+
 ### Pakai script start
 
 Jika mau gampang, edit dulu `start.sh` — sesuaikan path Python dengan environment kamu, lalu:
@@ -127,4 +139,3 @@ npm run dev
 |--------------------|-------------------------------------|
 | `/frame.jpg`       | Snapshot kamera terkini             |
 | `/detection_data`  | JSON: gesture, fingers, stats       |
->>>>>>> ac4914a (initial commit)
