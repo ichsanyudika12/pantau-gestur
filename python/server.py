@@ -210,8 +210,8 @@ if __name__ == "__main__":
     logger.info("Stream server starting on port %d", port)
     try:
         app.run(host="0.0.0.0", port=port, threaded=True, debug=False)
-    except KeyboardInterrupt:
-        pass
+    except (KeyboardInterrupt, SystemExit, OSError):
+        shutdown.set()
 
     logger.info("Shutting down...")
     shutdown.set()
