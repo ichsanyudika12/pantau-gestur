@@ -1,5 +1,8 @@
 import cv2
+import os
 import signal
+import socket
+import subprocess
 import threading
 import time
 import logging
@@ -90,6 +93,7 @@ def detect_loop():
     last_gesture = None
     last_send_time = 0
     cooldown = 0.5
+    error_count = 0
 
     logger.info("Detect loop started")
 
@@ -108,6 +112,7 @@ def detect_loop():
                 display_frame = frame
 
             now = time.time()
+            error_count = 0
 
             if finger_count is not None:
                 gesture = detector.get_gesture_name(finger_count)
@@ -144,6 +149,10 @@ def detect_loop():
                     last_gesture = None
                     last_send_time = now
         except Exception as e:
+            error_count += 1
+            if error_count > 10:
+                logger.error("Too many detect errors, stopping loop")
+                break
             logger.error("Detect loop error: %s", e)
 
         time.sleep(0.01)
@@ -195,9 +204,30 @@ def _handle_signal(signum, frame):
     shutdown.set()
 
 
+def free_port(port):
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.bind(("0.0.0.0", port))
+            return True
+    except OSError:
+        logger.warning("Port %d in use, attempting to free it...", port)
+        try:
+            subprocess.run(
+                ["fuser", "-k", f"{port}/tcp"],
+                capture_output=True, timeout=5,
+            )
+            time.sleep(0.5)
+            return True
+        except Exception:
+            logger.error("Could not free port %d", port)
+            return False
+
+
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, _handle_signal)
     signal.signal(signal.SIGTERM, _handle_signal)
+    free_port(5002)
 
     threads = [
         threading.Thread(target=grab_loop),
