@@ -6,7 +6,7 @@
   "scripts": {
     "web": "vite",
     "python": "fuser -k 5002/tcp 2>/dev/null; sg video -c '/home/rei/miniconda3/envs/hand-gesture/bin/python ../python/server.py'",
-    "dev": "concurrently -n python,react -c yellow,cyan \"npm run python\" \"npm run web\"",
+    "dev": "concurrently -n python,react -c yellow,cyan --kill-others \"npm run python\" \"npm run web\"",
     "stop": "lsof -ti :5002 | xargs kill -9 2>/dev/null; echo 'Server stopped'",
     "build": "vite build",
     "preview": "vite preview"

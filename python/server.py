@@ -200,8 +200,19 @@ def reset_stats():
 
 
 def _handle_signal(signum, frame):
-    logger.info("Shutdown signal received")
+    logger.info("Shutdown signal received (%s)", signum)
     shutdown.set()
+
+
+def _check_parent():
+    import os
+    ppid = os.getppid()
+    while not shutdown.is_set():
+        if os.getppid() != ppid:
+            logger.info("Parent process died, shutting down")
+            shutdown.set()
+            break
+        time.sleep(1)
 
 
 def free_port(port):
@@ -213,11 +224,15 @@ def free_port(port):
     except OSError:
         logger.warning("Port %d in use, attempting to free it...", port)
         try:
-            subprocess.run(
-                ["fuser", "-k", f"{port}/tcp"],
+            result = subprocess.run(
+                ["lsof", "-ti", f":{port}"],
                 capture_output=True, timeout=5,
             )
-            time.sleep(0.5)
+            if result.returncode == 0:
+                pid = result.stdout.strip()
+                if pid:
+                    subprocess.run(["kill", "-9", pid], capture_output=True, timeout=5)
+                    time.sleep(0.5)
             return True
         except Exception:
             logger.error("Could not free port %d", port)
@@ -227,11 +242,13 @@ def free_port(port):
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, _handle_signal)
     signal.signal(signal.SIGTERM, _handle_signal)
+    signal.signal(signal.SIGHUP, _handle_signal)
     free_port(5002)
 
     threads = [
         threading.Thread(target=grab_loop),
         threading.Thread(target=detect_loop),
+        threading.Thread(target=_check_parent, daemon=True),
     ]
     for t in threads:
         t.start()
