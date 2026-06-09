@@ -91,12 +91,6 @@ npm run web
 
 Buka `http://localhost:3000`.
 
-## Troubleshooting
-
-### Port 5002 sudah terpakai otomatis dibersihkan
-
-Tidak perlu khawatir — setiap `npm run dev` dijalankan, port 5002 akan dibersihkan otomatis sebelum server Python menyala.
-
 ### Pakai script start
 
 Jika mau gampang, edit dulu `start.sh` — sesuaikan path Python dengan environment kamu, lalu:
