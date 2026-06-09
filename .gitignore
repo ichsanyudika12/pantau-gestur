@@ -1,0 +1,8 @@
+python/firebase-credentials.json
+tugas-cloud-re405-2-firebase-adminsdk-fbsvc-338139ec78.json
+python/tugas-cloud-re405-2-*.json
+web/.env
+web/node_modules/
+web/dist/
+__pycache__/
+*.pyc
