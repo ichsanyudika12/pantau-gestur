@@ -11,6 +11,10 @@ export default function DashboardPage() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
+    fetch("http://localhost:5002/reset_stats").catch(() => {});
+  }, []);
+
+  useEffect(() => {
     const poll = async () => {
       try {
         const res = await fetch("http://localhost:5002/detection_data");

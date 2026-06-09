@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "web": "vite",
-    "python": "sg video -c '/home/rei/miniconda3/envs/hand-gesture/bin/python ../python/server.py'",
+    "python": "fuser -k 5002/tcp 2>/dev/null; sg video -c '/home/rei/miniconda3/envs/hand-gesture/bin/python ../python/server.py'",
     "dev": "concurrently -n python,react -c yellow,cyan \"npm run python\" \"npm run web\"",
     "build": "vite build",
     "preview": "vite preview"

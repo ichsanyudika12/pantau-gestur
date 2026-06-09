@@ -176,6 +176,20 @@ def detection_data():
     return jsonify(data)
 
 
+@app.route("/reset_stats")
+def reset_stats():
+    with stats_lock:
+        current_stats["totalDetection"] = 0
+        current_stats["fistCount"] = 0
+        current_stats["pointCount"] = 0
+        current_stats["peaceCount"] = 0
+        current_stats["threeCount"] = 0
+        current_stats["fourCount"] = 0
+        current_stats["openHandCount"] = 0
+    logger.info("Stats reset to zero")
+    return jsonify({"status": "ok"})
+
+
 def _handle_signal(signum, frame):
     logger.info("Shutdown signal received")
     shutdown.set()
